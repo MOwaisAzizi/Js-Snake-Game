@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی مار</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let snake = [{x: 10, y: 10}];
+        let direction = {x: 0, y: 0};
+        let food = {x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20)};
+        let score = 0;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'green';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x * 20, segment.y * 20, 18, 18);
+            });
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x * 20, food.y * 20, 18, 18);
+        }
+
+        function update() {
+            const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = {x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20)};
+            } else {
+                snake.pop();
+            }
+
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 || snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) {
+                alert('بازی تمام شد! امتیاز شما: ' + score);
+                document.location.reload();
+            }
+        }
+
+        function gameLoop() {
+            draw();
+            update();
+            setTimeout(gameLoop, 100);
+        }
+
+        window.addEventListener('keydown', e => {
+            switch (e.key) {
+                case 'ArrowUp':
+                    direction = {x: 0, y: -1};
+                    break;
+                case 'ArrowDown':
+                    direction = {x: 0, y: 1};
+                    break;
+                case 'ArrowLeft':
+                    direction = {x: -1, y: 0};
+                    break;
+                case 'ArrowRight':
+                    direction = {x: 1, y: 0};
+                    break;
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>
+
